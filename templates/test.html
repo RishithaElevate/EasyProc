@@ -1,92 +1,16 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <title>Student Test Interface</title>
+    <title>Student Test</title>
 </head>
 <body>
     <h1>Welcome to the Test Page</h1>
-    <p>This is where your test will appear.</p>
-
-    <!-- Webcam feed -->
-    <video id="video" width="640" height="480" autoplay></video>
-
-    <!-- Test question -->
     <form action="/submit_test" method="post">
-        <label for="q1">Question 1: What is 2 + 2?</label><br>
-        <input type="text" id="q1" name="q1"><br><br>
-
+        {% for q in questions %}
+            <label>{{ q[0] }}</label><br>
+            <input type="text" name="answer{{ loop.index }}"><br><br>
+        {% endfor %}
         <input type="submit" value="Submit Test">
     </form>
-
-    <!-- Detection scripts -->
-    <script>
-    navigator.mediaDevices.getUserMedia({ video: true, audio: true })
-      .then(stream => {
-        document.getElementById('video').srcObject = stream;
-
-        // Audio detection setup
-        const audioContext = new AudioContext();
-        const mediaStreamSource = audioContext.createMediaStreamSource(stream);
-        const recorder = audioContext.createScriptProcessor(4096, 1, 1);
-
-        mediaStreamSource.connect(recorder);
-        recorder.connect(audioContext.destination);
-
-        recorder.onaudioprocess = function(e) {
-          const inputData = e.inputBuffer.getChannelData(0);
-          const audioBlob = new Blob([new Float32Array(inputData)], { type: 'application/octet-stream' });
-
-          fetch('/detect_audio', {
-            method: 'POST',
-            body: audioBlob
-          });
-        };
-      })
-      .catch(err => {
-        console.error("Webcam or mic access denied:", err);
-      });
-
-    const canvas = document.createElement('canvas');
-    const video = document.getElementById('video');
-
-    // Phone detection every 5s
-    setInterval(() => {
-      canvas.width = video.videoWidth;
-      canvas.height = video.videoHeight;
-      canvas.getContext('2d').drawImage(video, 0, 0);
-
-      canvas.toBlob(blob => {
-        const formData = new FormData();
-        formData.append('frame', blob, 'frame.jpg');
-        fetch('/detect_phone', { method: 'POST', body: formData });
-      }, 'image/jpeg');
-    }, 5000);
-
-    // Person detection every 7s
-    setInterval(() => {
-      canvas.width = video.videoWidth;
-      canvas.height = video.videoHeight;
-      canvas.getContext('2d').drawImage(video, 0, 0);
-
-      canvas.toBlob(blob => {
-        const formData = new FormData();
-        formData.append('frame', blob, 'frame.jpg');
-        fetch('/detect_person', { method: 'POST', body: formData });
-      }, 'image/jpeg');
-    }, 7000);
-
-    // Head pose detection every 6s
-    setInterval(() => {
-      canvas.width = video.videoWidth;
-      canvas.height = video.videoHeight;
-      canvas.getContext('2d').drawImage(video, 0, 0);
-
-      canvas.toBlob(blob => {
-        const formData = new FormData();
-        formData.append('frame', blob, 'frame.jpg');
-        fetch('/detect_head_pose', { method: 'POST', body: formData });
-      }, 'image/jpeg');
-    }, 6000);
-    </script>
 </body>
 </html>
