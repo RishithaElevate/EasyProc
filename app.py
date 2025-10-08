@@ -1,8 +1,17 @@
 from flask import Flask, render_template, request, redirect
 import cv2
 import numpy as np
+import csv
+from datetime import datetime
 
 app = Flask(__name__)
+
+# Logging function
+def log_violation(violation_type, details):
+    timestamp = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+    with open('violations.csv', 'a', newline='') as file:
+        writer = csv.writer(file)
+        writer.writerow([timestamp, violation_type, details])
 
 # Login route
 @app.route('/login', methods=['POST'])
@@ -22,7 +31,14 @@ def student_dashboard():
 # Admin dashboard
 @app.route('/admin_dashboard')
 def admin_dashboard():
-    return render_template('admin_dashboard.html')
+    violations = []
+    try:
+        with open('violations.csv', 'r') as file:
+            reader = csv.reader(file)
+            violations = list(reader)
+    except FileNotFoundError:
+        pass
+    return render_template('admin_dashboard.html', violations=violations)
 
 # Test page
 @app.route('/test')
@@ -67,6 +83,7 @@ def detect_phone():
     result = run_yolo(frame)
     if result == "phone_detected":
         print("🚨 Phone detected!")
+        log_violation("Phone Detected", "Student appeared with phone in frame")
     return "OK"
 
 # Person detection route
@@ -81,6 +98,7 @@ def detect_person():
     people_count = count_people(frame)
     if people_count > 1:
         print(f"🚨 Multiple people detected: {people_count}")
+        log_violation("Multiple People", f"{people_count} people detected in webcam")
     return "OK"
 
 # Head pose detection route
@@ -95,6 +113,7 @@ def detect_head_pose():
     direction = analyze_pose(frame)
     if direction in ['left', 'right', 'down']:
         print(f"🚨 Suspicious head pose detected: {direction}")
+        log_violation("Head Pose", f"Student looking {direction}")
     return "OK"
 
 # Audio detection route (voice + noise)
@@ -107,9 +126,11 @@ def detect_audio():
 
     if detect_voice(audio_data):
         print("🎤 Voice detected during test!")
+        log_violation("Voice Detected", "Student speaking during test")
 
     if detect_noise(audio_data):
         print("🔊 Background noise detected!")
+        log_violation("Noise Detected", "Ambient noise detected during test")
 
     return "OK"
 
