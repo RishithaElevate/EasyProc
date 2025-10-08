@@ -1,0 +1,21 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>View Questions</title>
+</head>
+<body>
+    <h1>Saved Test Questions</h1>
+    <table border="1">
+        <tr>
+            <th>Question</th>
+            <th>Answer</th>
+        </tr>
+        {% for q in questions %}
+        <tr>
+            <td>{{ q[0] }}</td>
+            <td>{{ q[1] }}</td>
+        </tr>
+        {% endfor %}
+    </table>
+</body>
+</html>
