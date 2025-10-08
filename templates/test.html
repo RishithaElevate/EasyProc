@@ -7,15 +7,45 @@
     <h1>Welcome to the Test Page</h1>
     <p>This is where your test will appear.</p>
 
-    <!-- Placeholder for future cheating detection -->
-    <p>Cheating detection modules will run in the background.</p>
+    <!-- Webcam feed -->
+    <video id="video" width="640" height="480" autoplay></video>
 
-    <!-- Placeholder for questions -->
+    <!-- Test question -->
     <form action="/submit_test" method="post">
         <label for="q1">Question 1: What is 2 + 2?</label><br>
         <input type="text" id="q1" name="q1"><br><br>
 
         <input type="submit" value="Submit Test">
     </form>
+
+    <!-- Phone detection script -->
+    <script>
+    navigator.mediaDevices.getUserMedia({ video: true })
+      .then(stream => {
+        document.getElementById('video').srcObject = stream;
+      })
+      .catch(err => {
+        console.error("Webcam access denied:", err);
+      });
+
+    const canvas = document.createElement('canvas');
+    const video = document.getElementById('video');
+
+    setInterval(() => {
+      canvas.width = video.videoWidth;
+      canvas.height = video.videoHeight;
+      canvas.getContext('2d').drawImage(video, 0, 0);
+
+      canvas.toBlob(blob => {
+        const formData = new FormData();
+        formData.append('frame', blob, 'frame.jpg');
+
+        fetch('/detect_phone', {
+          method: 'POST',
+          body: formData
+        });
+      }, 'image/jpeg');
+    }, 5000); // every 5 seconds
+    </script>
 </body>
 </html>
