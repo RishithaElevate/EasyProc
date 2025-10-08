@@ -6,21 +6,23 @@
 <body>
     <h1>Welcome to the Test Page</h1>
 
-    <!-- Student Name -->
-    <label for="student_name">Your Name:</label><br>
-    <input type="text" id="student_name" name="student_name" required><br><br>
-
-    <!-- Webcam Feed -->
-    <video id="webcam" autoplay playsinline width="320" height="240"></video><br><br>
-
-    <!-- Test Questions -->
+    <!-- Test Form Starts -->
     <form action="/submit_test" method="post">
+        <!-- Student Name -->
+        <label for="student_name">Your Name:</label><br>
+        <input type="text" id="student_name" name="student_name" required><br><br>
+
+        <!-- Test Questions -->
         {% for q in questions %}
             <label>{{ q[0] }}</label><br>
             <input type="text" name="answer{{ loop.index }}"><br><br>
         {% endfor %}
+
         <input type="submit" value="Submit Test">
     </form>
+
+    <!-- Webcam Feed -->
+    <video id="webcam" autoplay playsinline width="320" height="240"></video><br><br>
 
     <!-- Security Script -->
     <script src="{{ url_for('static', filename='disable.js') }}"></script>
