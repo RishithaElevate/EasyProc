@@ -2,16 +2,58 @@
 <html>
 <head>
     <title>Admin Dashboard</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            padding: 20px;
+        }
+        h1 {
+            color: #333;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+        }
+        th, td {
+            border: 1px solid #ccc;
+            padding: 10px;
+            text-align: left;
+        }
+        th {
+            background-color: #f2f2f2;
+        }
+        .alert {
+            color: red;
+            font-weight: bold;
+        }
+    </style>
 </head>
 <body>
-    <h1>Welcome to the Admin Dashboard</h1>
-    <p>This is where you can create tests, monitor students, and view reports.</p>
+    <h1>Admin Dashboard</h1>
+    <p>Cheating alerts from student tests will appear below:</p>
 
-    <ul>
-        <li><a href="/create_test">Create a New Test</a></li>
-        <li><a href="/view_reports">View Cheating Reports</a></li>
-        <li><a href="/chat">Open Realtime Chat</a></li>
-    </ul>
+    <table>
+        <tr>
+            <th>Timestamp</th>
+            <th>Violation Type</th>
+            <th>Details</th>
+        </tr>
+        <tr>
+            <td>2025-10-08 21:15</td>
+            <td class="alert">Phone Detected</td>
+            <td>Student appeared with phone in frame</td>
+        </tr>
+        <tr>
+            <td>2025-10-08 21:17</td>
+            <td class="alert">Multiple People</td>
+            <td>2 people detected in webcam</td>
+        </tr>
+        <tr>
+            <td>2025-10-08 21:19</td>
+            <td class="alert">Voice Detected</td>
+            <td>Student speaking during test</td>
+        </tr>
+    </table>
 </body>
 </html>
-
