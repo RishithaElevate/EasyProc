@@ -97,6 +97,22 @@ def detect_head_pose():
         print(f"🚨 Suspicious head pose detected: {direction}")
     return "OK"
 
+# Audio detection route (voice + noise)
+@app.route('/detect_audio', methods=['POST'])
+def detect_audio():
+    from main.voice_detect import detect_voice
+    from main.noise_detect import detect_noise
+
+    audio_data = request.data  # raw audio bytes
+
+    if detect_voice(audio_data):
+        print("🎤 Voice detected during test!")
+
+    if detect_noise(audio_data):
+        print("🔊 Background noise detected!")
+
+    return "OK"
+
 # Run the app
 if __name__ == '__main__':
     app.run(debug=True)
