@@ -3,23 +3,9 @@ import csv
 
 app = Flask(__name__)
 
-@app.route('/create_test')
-def create_test():
-    return render_template('create_test.html')
-
-@app.route('/save_test', methods=['POST'])
-def save_test():
-    question = request.form['question']
-    answer = request.form['answer']
-
-    with open('questions.csv', 'a', newline='') as file:
-        writer = csv.writer(file)
-        writer.writerow([question, answer])
-
-    return "Test saved!"
-
-@app.route('/view_questions')
-def view_questions():
+# Load test questions
+@app.route('/test')
+def test():
     questions = []
     try:
         with open('questions.csv', 'r') as file:
@@ -27,7 +13,16 @@ def view_questions():
             questions = list(reader)
     except FileNotFoundError:
         pass
-    return render_template('view_questions.html', questions=questions)
+    return render_template('test.html', questions=questions)
+
+# Submit test answers
+@app.route('/submit_test', methods=['POST'])
+def submit_test():
+    answers = []
+    for key in request.form:
+        answers.append(request.form[key])
+    print("Student answers:", answers)
+    return "Test submitted!"
 
 if __name__ == '__main__':
     app.run(debug=True)
