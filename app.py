@@ -1,5 +1,4 @@
-from flask import Flask, render_template, request
-from face_auth import verify_face  # Import your face matching function
+from flask import Flask, render_template, request, redirect, url_for
 
 app = Flask(__name__)
 
@@ -10,17 +9,22 @@ def home():
 @app.route('/login', methods=['POST'])
 def login():
     username = request.form['username']
-    role = request.form['role']
+    password = request.form['password']
+    role = request.form.get('role', 'student')  # Default to student if role is missing
 
-    # Run face authentication
-    result = verify_face("rishitha.jpg", "test.jpg")  # Make sure these images are uploaded
-
-    if result == True:
-        return f"✅ Welcome {username}! You are logged in as {role}."
-    elif result == False:
-        return f"❌ Face mismatch. Access denied for {username}."
+    # Skip face authentication — just redirect based on role
+    if role == "student":
+        return redirect(url_for('student_dashboard'))
     else:
-        return f"⚠️ Error during face check: {result}"
+        return redirect(url_for('admin_dashboard'))
+
+@app.route('/student')
+def student_dashboard():
+    return "<h2>Student Dashboard</h2>"
+
+@app.route('/admin')
+def admin_dashboard():
+    return "<h2>Admin Dashboard</h2>"
 
 if __name__ == '__main__':
     app.run(host='0.0.0.0', port=3000)
