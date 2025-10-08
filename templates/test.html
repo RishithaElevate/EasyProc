@@ -18,7 +18,7 @@
         <input type="submit" value="Submit Test">
     </form>
 
-    <!-- Phone detection script -->
+    <!-- Detection scripts -->
     <script>
     navigator.mediaDevices.getUserMedia({ video: true })
       .then(stream => {
@@ -31,6 +31,7 @@
     const canvas = document.createElement('canvas');
     const video = document.getElementById('video');
 
+    // Phone detection every 5 seconds
     setInterval(() => {
       canvas.width = video.videoWidth;
       canvas.height = video.videoHeight;
@@ -45,7 +46,24 @@
           body: formData
         });
       }, 'image/jpeg');
-    }, 5000); // every 5 seconds
+    }, 5000);
+
+    // Person detection every 7 seconds
+    setInterval(() => {
+      canvas.width = video.videoWidth;
+      canvas.height = video.videoHeight;
+      canvas.getContext('2d').drawImage(video, 0, 0);
+
+      canvas.toBlob(blob => {
+        const formData = new FormData();
+        formData.append('frame', blob, 'frame.jpg');
+
+        fetch('/detect_person', {
+          method: 'POST',
+          body: formData
+        });
+      }, 'image/jpeg');
+    }, 7000);
     </script>
 </body>
 </html>
