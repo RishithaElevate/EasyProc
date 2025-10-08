@@ -5,6 +5,15 @@
 </head>
 <body>
     <h1>Welcome to the Test Page</h1>
+
+    <!-- Student Name -->
+    <label for="student_name">Your Name:</label><br>
+    <input type="text" id="student_name" name="student_name" required><br><br>
+
+    <!-- Webcam Feed -->
+    <video id="webcam" autoplay playsinline width="320" height="240"></video><br><br>
+
+    <!-- Test Questions -->
     <form action="/submit_test" method="post">
         {% for q in questions %}
             <label>{{ q[0] }}</label><br>
@@ -12,5 +21,19 @@
         {% endfor %}
         <input type="submit" value="Submit Test">
     </form>
+
+    <!-- Security Script -->
+    <script src="{{ url_for('static', filename='disable.js') }}"></script>
+
+    <!-- Webcam Activation -->
+    <script>
+    navigator.mediaDevices.getUserMedia({ video: true })
+      .then(stream => {
+        document.getElementById('webcam').srcObject = stream;
+      })
+      .catch(err => {
+        console.error("Webcam access denied:", err);
+      });
+    </script>
 </body>
 </html>
