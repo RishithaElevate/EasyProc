@@ -31,7 +31,7 @@
     const canvas = document.createElement('canvas');
     const video = document.getElementById('video');
 
-    // Phone detection every 5 seconds
+    // Phone detection every 5s
     setInterval(() => {
       canvas.width = video.videoWidth;
       canvas.height = video.videoHeight;
@@ -40,15 +40,11 @@
       canvas.toBlob(blob => {
         const formData = new FormData();
         formData.append('frame', blob, 'frame.jpg');
-
-        fetch('/detect_phone', {
-          method: 'POST',
-          body: formData
-        });
+        fetch('/detect_phone', { method: 'POST', body: formData });
       }, 'image/jpeg');
     }, 5000);
 
-    // Person detection every 7 seconds
+    // Person detection every 7s
     setInterval(() => {
       canvas.width = video.videoWidth;
       canvas.height = video.videoHeight;
@@ -57,13 +53,22 @@
       canvas.toBlob(blob => {
         const formData = new FormData();
         formData.append('frame', blob, 'frame.jpg');
-
-        fetch('/detect_person', {
-          method: 'POST',
-          body: formData
-        });
+        fetch('/detect_person', { method: 'POST', body: formData });
       }, 'image/jpeg');
     }, 7000);
+
+    // Head pose detection every 6s
+    setInterval(() => {
+      canvas.width = video.videoWidth;
+      canvas.height = video.videoHeight;
+      canvas.getContext('2d').drawImage(video, 0, 0);
+
+      canvas.toBlob(blob => {
+        const formData = new FormData();
+        formData.append('frame', blob, 'frame.jpg');
+        fetch('/detect_head_pose', { method: 'POST', body: formData });
+      }, 'image/jpeg');
+    }, 6000);
     </script>
 </body>
 </html>
