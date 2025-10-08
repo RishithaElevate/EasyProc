@@ -9,7 +9,6 @@ app = Flask(__name__)
 def login():
     username = request.form['username']
     password = request.form['password']
-    # Simple role check
     if username == 'admin':
         return redirect('/admin_dashboard')
     else:
@@ -82,6 +81,20 @@ def detect_person():
     people_count = count_people(frame)
     if people_count > 1:
         print(f"🚨 Multiple people detected: {people_count}")
+    return "OK"
+
+# Head pose detection route
+@app.route('/detect_head_pose', methods=['POST'])
+def detect_head_pose():
+    from main.head_pose import analyze_pose
+
+    file = request.files['frame']
+    npimg = np.frombuffer(file.read(), np.uint8)
+    frame = cv2.imdecode(npimg, cv2.IMREAD_COLOR)
+
+    direction = analyze_pose(frame)
+    if direction in ['left', 'right', 'down']:
+        print(f"🚨 Suspicious head pose detected: {direction}")
     return "OK"
 
 # Run the app
