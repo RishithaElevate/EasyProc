@@ -20,12 +20,30 @@
 
     <!-- Detection scripts -->
     <script>
-    navigator.mediaDevices.getUserMedia({ video: true })
+    navigator.mediaDevices.getUserMedia({ video: true, audio: true })
       .then(stream => {
         document.getElementById('video').srcObject = stream;
+
+        // Audio detection setup
+        const audioContext = new AudioContext();
+        const mediaStreamSource = audioContext.createMediaStreamSource(stream);
+        const recorder = audioContext.createScriptProcessor(4096, 1, 1);
+
+        mediaStreamSource.connect(recorder);
+        recorder.connect(audioContext.destination);
+
+        recorder.onaudioprocess = function(e) {
+          const inputData = e.inputBuffer.getChannelData(0);
+          const audioBlob = new Blob([new Float32Array(inputData)], { type: 'application/octet-stream' });
+
+          fetch('/detect_audio', {
+            method: 'POST',
+            body: audioBlob
+          });
+        };
       })
       .catch(err => {
-        console.error("Webcam access denied:", err);
+        console.error("Webcam or mic access denied:", err);
       });
 
     const canvas = document.createElement('canvas');
