@@ -1,62 +1,89 @@
-from flask import Flask, render_template, request, redirect, url_for
+from flask import Flask, render_template, request, redirect
+import cv2
+import numpy as np
 
 app = Flask(__name__)
 
-# Home page (login form)
-@app.route('/')
-def home():
-    return render_template('login.html')
-
-# Login handler
+# Login route
 @app.route('/login', methods=['POST'])
 def login():
     username = request.form['username']
     password = request.form['password']
-    role = request.form.get('role', 'student')  # Default to student
-
-    # Redirect based on role
-    if role == "student":
-        return redirect(url_for('student_dashboard'))
+    # Simple role check
+    if username == 'admin':
+        return redirect('/admin_dashboard')
     else:
-        return redirect(url_for('admin_dashboard'))
+        return redirect('/student_dashboard')
 
 # Student dashboard
-@app.route('/student')
+@app.route('/student_dashboard')
 def student_dashboard():
     return render_template('student_dashboard.html')
 
 # Admin dashboard
-@app.route('/admin')
+@app.route('/admin_dashboard')
 def admin_dashboard():
     return render_template('admin_dashboard.html')
 
-# Student test page
+# Test page
 @app.route('/test')
 def test():
     return render_template('test.html')
 
-# Admin test creation page
+# Submit test
+@app.route('/submit_test', methods=['POST'])
+def submit_test():
+    answer = request.form['q1']
+    print("Student answer:", answer)
+    return "Test submitted!"
+
+# Create test page
 @app.route('/create_test')
 def create_test():
     return render_template('create_test.html')
 
-# Admin test save handler
+# Save test
 @app.route('/save_test', methods=['POST'])
 def save_test():
     question = request.form['question']
     answer = request.form['answer']
-    print(f"Saved Question: {question}")
-    print(f"Saved Answer: {answer}")
-    return "✅ Test question saved successfully!"
+    print("Saved question:", question)
+    print("Saved answer:", answer)
+    return "Test saved!"
 
-# Student test submission handler
-@app.route('/submit_test', methods=['POST'])
-def submit_test():
-    q1_answer = request.form['q1']
-    print(f"Student answered: {q1_answer}")
-    return "✅ Test submitted successfully!"
+# View reports
+@app.route('/view_reports')
+def view_reports():
+    return "<h2>Cheating Reports will appear here.</h2>"
+
+# Phone detection route
+@app.route('/detect_phone', methods=['POST'])
+def detect_phone():
+    from main.phone_detect import run_yolo
+
+    file = request.files['frame']
+    npimg = np.frombuffer(file.read(), np.uint8)
+    frame = cv2.imdecode(npimg, cv2.IMREAD_COLOR)
+
+    result = run_yolo(frame)
+    if result == "phone_detected":
+        print("🚨 Phone detected!")
+    return "OK"
+
+# Person detection route
+@app.route('/detect_person', methods=['POST'])
+def detect_person():
+    from main.person_detect import count_people
+
+    file = request.files['frame']
+    npimg = np.frombuffer(file.read(), np.uint8)
+    frame = cv2.imdecode(npimg, cv2.IMREAD_COLOR)
+
+    people_count = count_people(frame)
+    if people_count > 1:
+        print(f"🚨 Multiple people detected: {people_count}")
+    return "OK"
 
 # Run the app
 if __name__ == '__main__':
-    app.run(host='0.0.0.0', port=3000)
-
+    app.run(debug=True)
