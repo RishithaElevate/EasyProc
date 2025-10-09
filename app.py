@@ -98,6 +98,11 @@ def login():
 def student_dashboard():
     return render_template('student_dashboard.html')
 
+@app.route('/')
+def home():
+    return "<h2>Welcome to EasyProc 👋</h2><p>Try <a href='/test'>/test</a> or <a href='/login'>/login</a></p>"
+
+
 # ✅ Run App
 
 
