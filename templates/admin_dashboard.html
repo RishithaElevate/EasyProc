@@ -39,21 +39,13 @@
             <th>Violation Type</th>
             <th>Details</th>
         </tr>
+        {% for row in violations %}
         <tr>
-            <td>2025-10-08 21:15</td>
-            <td class="alert">Phone Detected</td>
-            <td>Student appeared with phone in frame</td>
+            <td>{{ row[0] }}</td>
+            <td class="alert">{{ row[1] }}</td>
+            <td>{{ row[2] }}</td>
         </tr>
-        <tr>
-            <td>2025-10-08 21:17</td>
-            <td class="alert">Multiple People</td>
-            <td>2 people detected in webcam</td>
-        </tr>
-        <tr>
-            <td>2025-10-08 21:19</td>
-            <td class="alert">Voice Detected</td>
-            <td>Student speaking during test</td>
-        </tr>
+        {% endfor %}
     </table>
 </body>
 </html>
