@@ -98,15 +98,19 @@ def login():
 def student_dashboard():
     return render_template('student_dashboard.html')
 
+# 🏠 Homepage
 @app.route('/')
 def home():
     return "<h2>Welcome to EasyProc 👋</h2><p>Try <a href='/test'>/test</a> or <a href='/login'>/login</a></p>"
 
+# 🚨 Manual Violation Trigger
+@app.route('/trigger_violation')
+def trigger_violation():
+    from main.log_violation import log_violation
+    log_violation("test_violation", "Manual trigger for testing")
+    return "Violation logged"
 
 # ✅ Run App
-
-
 if __name__ == '__main__':
     port = int(os.environ.get('PORT', 5000))
     app.run(host='0.0.0.0', port=port)
-
