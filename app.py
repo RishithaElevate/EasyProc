@@ -73,13 +73,22 @@ def admin_dashboard():
         pass
     return render_template('admin_dashboard.html', violations=violations)
 
+# 📈 Log Analyzer
+@app.route('/analyze_logs')
+def analyze_logs():
+    try:
+        from main.log_analyzer import analyze_logs
+        result = analyze_logs()
+    except Exception as e:
+        result = f"Error analyzing logs: {e}"
+    return render_template('log_analysis.html', result=result)
+
 # 👤 Simple Login (No Face Auth)
 @app.route('/login', methods=['GET', 'POST'])
 def login():
     if request.method == 'POST':
         username = request.form.get('username')
         password = request.form.get('password')
-        # You can add basic username/password check here if needed
         return redirect('/student_dashboard')
     return render_template('login.html')
 
