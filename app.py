@@ -1,6 +1,7 @@
 from flask import Flask, render_template, request, redirect
 import csv
 from datetime import datetime
+import os
 
 app = Flask(__name__)
 
@@ -98,5 +99,9 @@ def student_dashboard():
     return render_template('student_dashboard.html')
 
 # ✅ Run App
+
+
 if __name__ == '__main__':
-    app.run(debug=True)
+    port = int(os.environ.get('PORT', 5000))
+    app.run(host='0.0.0.0', port=port)
+
