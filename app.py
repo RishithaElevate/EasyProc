@@ -2,8 +2,23 @@ from flask import Flask, render_template, request, redirect
 import csv
 from datetime import datetime
 import os
+import threading  # ✅ Added for background detection
 
 app = Flask(__name__)
+
+# 🚨 Start Detection Modules
+def start_detection_modules():
+    from main.phone_detect import detect_phone
+    from main.person_detect import detect_person
+    from main.head_pose import detect_head_pose
+    from main.voice_detect import detect_voice
+    from main.noise_detect import detect_noise
+
+    threading.Thread(target=detect_phone, daemon=True).start()
+    threading.Thread(target=detect_person, daemon=True).start()
+    threading.Thread(target=detect_head_pose, daemon=True).start()
+    threading.Thread(target=detect_voice, daemon=True).start()
+    threading.Thread(target=detect_noise, daemon=True).start()
 
 # 🧪 Test Page
 @app.route('/test')
@@ -15,6 +30,10 @@ def test():
             questions = list(reader)
     except FileNotFoundError:
         pass
+
+    # ✅ Start detection when test begins
+    start_detection_modules()
+
     return render_template('test.html', questions=questions)
 
 # 🧾 Submit Test Answers
