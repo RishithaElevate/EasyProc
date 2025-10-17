@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Student Dashboard | EasyProc</title>
+  <style>
+    body {
+      font-family: 'Segoe UI', sans-serif;
+      background: linear-gradient(to right, #e3f2fd, #fce4ec);
+      margin: 0;
+      padding: 0;
+    }
+
+    .container {
+      max-width: 800px;
+      margin: 50px auto;
+      background-color: #fff;
+      padding: 30px;
+      border-radius: 12px;
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+    }
+
+    h1 {
+      text-align: center;
+      color: #2e7d32;
+      margin-bottom: 30px;
+    }
+
+    .panel {
+      margin-top: 20px;
+    }
+
+    .panel h2 {
+      color: #1565c0;
+      margin-bottom: 10px;
+    }
+
+    #violation-log {
+      max-height: 300px;
+      overflow-y: scroll;
+      background: #f9f9f9;
+      padding: 15px;
+      border: 1px solid #ccc;
+      border-radius: 6px;
+      white-space: pre-wrap;
+      font-family: monospace;
+      font-size: 14px;
+    }
+
+    .footer {
+      text-align: center;
+      margin-top: 40px;
+      font-size: 14px;
+      color: #777;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h1>👩‍🎓 Student Dashboard</h1>
+
+    <div class="panel">
+      <h2>📊 Live Violation Panel</h2>
+      <pre id="violation-log">Loading...</pre>
+    </div>
+
+    <div class="footer">
+      © 2025 EasyProc | Real-Time Exam Monitoring
+    </div>
+  </div>
+
+  <script>
+    setInterval(() => {
+      fetch('/get_violations')
+        .then(res => res.text())
+        .then(data => {
+          document.getElementById('violation-log').innerText = data;
+        });
+    }, 5000); // refresh every 5 seconds
+  </script>
+</body>
+</html>
+
