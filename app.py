@@ -2,7 +2,7 @@ from flask import Flask, render_template, request, redirect
 import csv
 from datetime import datetime
 import os
-import threading  # ✅ Added for background detection
+import threading
 
 app = Flask(__name__)
 
@@ -31,9 +31,7 @@ def test():
     except FileNotFoundError:
         pass
 
-    # ✅ Start detection when test begins
-    start_detection_modules()
-
+    start_detection_modules()  # ✅ Start detection when test begins
     return render_template('test.html', questions=questions)
 
 # 🧾 Submit Test Answers
@@ -103,7 +101,7 @@ def analyze_logs():
         result = f"Error analyzing logs: {e}"
     return render_template('log_analysis.html', result=result)
 
-# 👤 Simple Login (No Face Auth)
+# 👤 Simple Login
 @app.route('/login', methods=['GET', 'POST'])
 def login():
     if request.method == 'POST':
@@ -128,6 +126,15 @@ def trigger_violation():
     from main.log_violation import log_violation
     log_violation("test_violation", "Manual trigger for testing")
     return "Violation logged"
+
+# 🔍 Live Violation Fetcher
+@app.route('/get_violations')
+def get_violations():
+    try:
+        with open('violations.csv', 'r') as f:
+            return f.read()
+    except FileNotFoundError:
+        return "No violations yet."
 
 # ✅ Run App
 if __name__ == '__main__':
